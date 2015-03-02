@@ -1,5 +1,7 @@
 ;;;; package.lisp
 
 (defpackage #:cl-mpdclient
-  (:use #:cl))
+  (:use #:cl
+        #:mpd
+        #:cl-ncurses))
 
