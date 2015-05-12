@@ -47,6 +47,7 @@
                (case (code-char input)
                  (#\j (cl-ncurses:move (incf cursor-line) 0))
                  (#\k (cl-ncurses:move (decf cursor-line) 0))
+                 (#\P (pause mpdconn))
                  (otherwise (format t "'~a'~%" input))
                  )
                )
