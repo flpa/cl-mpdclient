@@ -21,7 +21,7 @@
 (tag-types *conn*)
 (search-tracks *conn* :artist "Amon Amarth")
 
-(defparameter *max-artists* 60)
+(defparameter *max-artists* 300)
 
 (defparameter *async* nil)
 
@@ -30,6 +30,9 @@
   (let ((scr (initscr))
         (mpdconn (connect))
         (cursor-line 0))
+    (scrollok *stdscr* TRUE)
+    (idlok *stdscr* TRUE)
+    ;;(setscrreg 0 100)
     (nodelay scr (if *async* TRUE FALSE))
     (cbreak)
     (cl-ncurses:clear)
@@ -37,7 +40,10 @@
     (loop for artist in (subseq (list-metadata mpdconn 'artist) 0 *max-artists*)
           for i from 0
           do 
-          (mvwaddstr scr i 0 (subseq artist 8)))
+          (printw (format nil "~a" i))
+          ;;(mvprintw i 0 (format nil "~a" i))
+         ;; (mvwaddstr scr i 0 (subseq artist 8))
+          )
     (cl-ncurses:move cursor-line 0)
     (loop for input = (getch) 
           for i from 0
