@@ -2,11 +2,6 @@
 
 (in-package #:cl-mpdclient)
 
-(defun firstn (list n)
-  (if (< (length list) n)
-    list
-    (butlast list (- (length list) n))))
-
 (defparameter *conn* (connect))
 (disconnect *conn*)
 
@@ -17,36 +12,45 @@
 
 (ping *conn*)
 
-;; returns list of strings like ("Amon Amarth" "Wither") ...
-
-
+;; returns list of strings like ("Artist: Amon Amarth" "Artist: Wither") ...
 (list-metadata *conn* 'artist)
 (length (list-metadata *conn* 'artist))
-;;returns niL?
-(mpd::parse-list (list-metadata *conn* 'artist))
 
 (list-metadata *conn* 'genre)
 (playlist-info *conn*)
 (tag-types *conn*)
 (search-tracks *conn* :artist "Amon Amarth")
 
-(defparameter *max-artists* 40)
+(defparameter *max-artists* 60)
+
+(defparameter *async* nil)
+
 
 (defun floclient () 
   (let ((scr (initscr))
-        (mpdconn (connect)))
-    (nodelay scr TRUE)
+        (mpdconn (connect))
+        (cursor-line 0))
+    (nodelay scr (if *async* TRUE FALSE))
     (cbreak)
+    (cl-ncurses:clear)
     (noecho)
-    (loop for artist in (firstn (list-metadata mpdconn 'artist) *max-artists*)
-          for i from 10
+    (loop for artist in (subseq (list-metadata mpdconn 'artist) 0 *max-artists*)
+          for i from 0
           do 
-          (mvwaddstr scr i 2 artist))
+          (mvwaddstr scr i 0 (subseq artist 8)))
+    (cl-ncurses:move cursor-line 0)
     (loop for input = (getch) 
+          for i from 0
           while (not (eql (char-code #\q) input))
-          do (sb-unix:nanosleep 0 100)
-          if (not (eql ERR input))
-          do (format t "'~a'~%" input))
+          do (progn
+               (when *async* (sb-unix:nanosleep 0 100))
+               (case (code-char input)
+                 (#\j (cl-ncurses:move (incf cursor-line) 0))
+                 (#\k (cl-ncurses:move (decf cursor-line) 0))
+                 (otherwise (format t "'~a'~%" input))
+                 )
+               )
+          )
     (wrefresh scr)
     (endwin)
     (disconnect mpdconn)
