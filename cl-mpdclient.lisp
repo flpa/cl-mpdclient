@@ -25,7 +25,9 @@
 
 (defparameter *async* nil)
 
-(defparameter *pad-size* 50)
+(defparameter *pad-size* 51)
+(defparameter *pad-display-size* 9)
+
 
 (defun floclient () 
   (initscr)
@@ -52,11 +54,15 @@
           for i from 0
           while (not (eql (char-code #\q) input))
           do (progn
-               (prefresh pad scroll-index 0 3 3 14 14)
+               (prefresh pad scroll-index 0 0 0 *pad-display-size* *pad-display-size*)
                (when *async* (sb-unix:nanosleep 0 100))
                (case (code-char input)
-                 (#\j (cl-ncurses:move (incf cursor-line) 0))
-                 (#\k (cl-ncurses:move (decf cursor-line) 0))
+                 (#\j (if (= cursor-line *pad-display-size*)       
+                        (incf scroll-index)
+                        (cl-ncurses:move (incf cursor-line) 0)))
+                 (#\k (if (zerop cursor-line)       
+                        (decf scroll-index)
+                        (cl-ncurses:move (decf cursor-line) 0)))
                  (#\P (pause mpdconn))
                  (otherwise (format t "'~a'~%" input))
                  )
