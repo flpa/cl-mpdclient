@@ -10,16 +10,21 @@
 
 (defun matching-artists (artists term)
   (remove-if-not #'(lambda (x)
-                     (search term x)) artists)
-  )
+                     (search term x)) artists))
 
+(defun main (argv)
+  (princ argv)
+  (sb-ext:disable-debugger)
+  (floclient))
 
-(defun floclient (&optional argv) 
+(defun floclient () 
   (initscr)
   (let* ((mpdconn (connect))
          (cursor-line 0)
          (scroll-index 0)
-         (pad (newpad *pad-size* *pad-size*))
+         (lines (- *LINES* 1))
+         (artists-width (floor (/ *COLS* 3)))
+         (pad (newpad *max-artists* 30))
          (artists (mapcar #'(lambda (x) (subseq x 8)) (subseq (list-metadata mpdconn 'artist) 0 *max-artists*))))
     ;;    (scrollok *stdscr* TRUE)
     ;;   (idlok *stdscr* TRUE)
@@ -40,10 +45,10 @@
           for i from 0
           while (not (eql (char-code #\q) input))
           do (progn
-               (prefresh pad scroll-index 0 0 0 *pad-display-size* *pad-display-size*)
+               (prefresh pad scroll-index 0 0 0 lines artists-width)
                (when *async* (sb-unix:nanosleep 0 100))
                (case (code-char input)
-                 (#\j (if (= cursor-line *pad-display-size*)       
+                 (#\j (if (= cursor-line lines)       
                         (incf scroll-index)
                         (cl-ncurses:move (incf cursor-line) 0)))
                  (#\k (if (zerop cursor-line)       
