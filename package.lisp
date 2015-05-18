@@ -3,5 +3,5 @@
 (defpackage #:cl-mpdclient
   (:use #:cl
         #:mpd
-        #:cl-ncurses))
-
+        #:cl-ncurses)
+  (:shadowing-import-from #:cl-ncurses :clear :move))

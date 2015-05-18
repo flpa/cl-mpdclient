@@ -1,26 +1,6 @@
 ;;;; cl-mpdclient.lisp
 
 (in-package #:cl-mpdclient)
-
-(defparameter *conn* (connect))
-(disconnect *conn*)
-
-(now-playing *conn*)
-;;(play *conn*)
-;;(pause *conn*)
-(status *conn*)
-
-(ping *conn*)
-
-;; returns list of strings like ("Artist: Amon Amarth" "Artist: Wither") ...
-(list-metadata *conn* 'artist)
-(length (list-metadata *conn* 'artist))
-
-(list-metadata *conn* 'genre)
-(playlist-info *conn*)
-(tag-types *conn*)
-(search-tracks *conn* :artist "Amon Amarth")
-
 (defparameter *max-artists* 300)
 
 (defparameter *async* nil)
@@ -34,7 +14,7 @@
   )
 
 
-(defun floclient () 
+(defun floclient (&optional argv) 
   (initscr)
   (let* ((mpdconn (connect))
          (cursor-line 0)
@@ -73,6 +53,7 @@
                  (#\s (progn 
                         (format t "Type to search...~%")
                         (loop for c = (code-char (getch))
+                              ;; resizable string
                               with term = (make-array 5 :fill-pointer 0 :adjustable t :element-type 'character)
                               while (not (eql #\q c))
                               do (progn
@@ -92,19 +73,3 @@
     )
   (endwin)
   )
-
-(defun curse-test () 
-  (let ((scr (initscr))
-        (win1 (newwin 20 20 20 20)))
-    (nodelay scr TRUE)
-    (erase)
-    (cbreak)
-    (noecho)
-    (mvwaddstr scr 10 2 "Type any thing to exit.")
-    (mvwaddstr win1 0 0 "The window.")
-    (wrefresh scr)
-    (wrefresh win1)
-    (delwin win1)
-    (delwin scr)
-    (endwin)
-    ))
