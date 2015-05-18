@@ -20,7 +20,7 @@
          (cursor-line 0)
          (scroll-index 0)
          (pad (newpad *pad-size* *pad-size*))
-         (artists (subseq (list-metadata mpdconn 'artist) 0 *max-artists*)))
+         (artists (mapcar #'(lambda (x) (subseq x 8)) (subseq (list-metadata mpdconn 'artist) 0 *max-artists*))))
     ;;    (scrollok *stdscr* TRUE)
     ;;   (idlok *stdscr* TRUE)
     ;;(setscrreg 0 100)
@@ -33,7 +33,7 @@
           do 
           ;;(printw (format nil "~a~%" i))
           ;;(mvprintw i 0 (format nil "~a" i))
-          (mvwaddstr pad i 0 (subseq artist 8))
+          (mvwaddstr pad i 0 artist)
           )
     (cl-ncurses:move cursor-line 0)
     (loop for input = (getch) 
@@ -50,6 +50,7 @@
                         (decf scroll-index)
                         (cl-ncurses:move (decf cursor-line) 0)))
                  (#\P (pause mpdconn))
+                 (#\Newline (format t "Selected ~a~%" (nth cursor-line artists)))
                  (#\s (progn 
                         (format t "Type to search...~%")
                         (loop for c = (code-char (getch))
