@@ -1,4 +1,3 @@
-
 all: .quicklisp-manifest.txt
 	/usr/local/bin/buildapp --manifest-file .quicklisp-manifest.txt --load-system cl-mpdclient --load cl-mpdclient.lisp --entry cl-mpdclient:floclient --output eminempp
 
