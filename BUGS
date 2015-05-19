@@ -1,0 +1,5 @@
+- Error opening shared object "/lib64/libncurses.so":
+  /lib64/libncurses.so: file too short.
+
+- mpd not in quickllisp
+- error if artist count < *max-artists*
