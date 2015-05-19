@@ -55,7 +55,15 @@
                         (decf scroll-index)
                         (cl-ncurses:move (decf cursor-line) 0)))
                  (#\P (pause mpdconn))
-                 (#\Newline (format stdout "Selected ~a~%" (nth cursor-line artists)))
+                 (#\c (mpd:clear mpdconn))
+                 (#\Newline 
+                  (let ((selected (nth cursor-line artists)))
+                    (format stdout "Selected ~a~%" selected)
+                    (mpd:clear mpdconn)
+                    ;;works for some
+                    ;;(add mpdconn selected) 
+                    (add mpdconn (first (find-tracks mpdconn :artist selected)))
+                    (play mpdconn)))
                  (#\s (progn 
                         (format stdout "Type to search...~%")
                         (loop for c = (code-char (getch))

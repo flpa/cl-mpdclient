@@ -10,6 +10,10 @@
 
 (ping *conn*)
 
+(mpd:clear *conn*)
+
+(add *conn* "Amon Amarth")
+
 ;; returns list of strings like ("Artist: Amon Amarth" "Artist: Wither") ...
 (list-metadata *conn* 'artist)
 (length (list-metadata *conn* 'artist))
@@ -18,4 +22,7 @@
 (playlist-info *conn*)
 (tag-types *conn*)
 (search-tracks *conn* :artist "Amon Amarth")
+(search-tracks *conn* :artist "Death")
+(find-tracks *conn* :artist "Death")
+(add *conn* (first (search-tracks *conn* :artist "Amon Amarth")))
 
