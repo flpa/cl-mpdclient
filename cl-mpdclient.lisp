@@ -39,12 +39,13 @@
           for i from 0
           do (mvwaddstr pad i 0 artist))
     (cl-ncurses:move cursor-line 0)
-    (prefresh pad scroll-index 0 0 0 lines artists-width)
+    (printw "j/k to navigate, P to pause MPD, q to quit.")
+    (prefresh pad scroll-index 0 1 0 lines artists-width)
     (refresh)
     (loop for input = (getch) 
           while (not (eql (char-code #\q) input))
           do (progn
-               (prefresh pad scroll-index 0 0 0 lines artists-width)
+               (prefresh pad scroll-index 0 1 0 lines artists-width)
                (when *async* (sb-unix:nanosleep 0 100))
                (case (code-char input)
                  (#\j (if (= cursor-line lines)       
