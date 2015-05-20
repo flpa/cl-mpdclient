@@ -1,7 +1,6 @@
 ;;;; cl-mpdclient.lisp
 
 (in-package #:cl-mpdclient)
-(defparameter *max-artists* 300)
 
 (defparameter *async* nil)
 
@@ -24,10 +23,10 @@
          (scroll-index 0)
          (lines (- *LINES* 1))
          (artists-width (floor (/ *COLS* 3)))
-         (pad (newpad *max-artists* 30))
          (stdout nil)
          (artists (mapcar #'(lambda (x) (subseq x 8)) 
-                          (subseq (list-metadata mpdconn 'artist) 0 *max-artists*))))
+                          (list-metadata mpdconn 'artist)))
+         (pad (newpad (length artists) 30)))
     ;;    (scrollok *stdscr* TRUE)
     ;;   (idlok *stdscr* TRUE)
     ;;(setscrreg 0 100)
@@ -48,6 +47,7 @@
                (prefresh pad scroll-index 0 1 0 lines artists-width)
                (when *async* (sb-unix:nanosleep 0 100))
                (case (code-char input)
+                 ;;limit on lower bound
                  (#\j (if (= cursor-line lines)       
                         (incf scroll-index)
                         (cl-ncurses:move (incf cursor-line) 0)))
@@ -58,7 +58,7 @@
                  (#\c (mpd:clear mpdconn))
                  (#\G (progn ;;TODO
                         (cl-ncurses:move (setf cursor-line (length artists)) 0)
-                        (setf scroll-index *max-artists*)
+                        ;;(setf scroll-index *max-artists*)
                         ))
                  (#\Newline 
                   (let ((selected (nth cursor-line artists)))
