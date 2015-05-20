@@ -27,11 +27,7 @@
          (artists (mapcar #'(lambda (x) (subseq x 8)) 
                           (list-metadata mpdconn 'artist)))
          (pad (newpad (length artists) 30)))
-    ;;    (scrollok *stdscr* TRUE)
-    ;;   (idlok *stdscr* TRUE)
-    ;;(setscrreg 0 100)
     (nodelay pad (if *async* TRUE FALSE))
-    ;;   (cbreak)
     (cl-ncurses:clear)
     (noecho)
     (loop for artist in artists
