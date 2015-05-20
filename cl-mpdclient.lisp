@@ -56,6 +56,10 @@
                         (cl-ncurses:move (decf cursor-line) 0)))
                  (#\P (pause mpdconn))
                  (#\c (mpd:clear mpdconn))
+                 (#\G (progn ;;TODO
+                        (cl-ncurses:move (setf cursor-line (length artists)) 0)
+                        (setf scroll-index *max-artists*)
+                        ))
                  (#\Newline 
                   (let ((selected (nth cursor-line artists)))
                     (format stdout "Selected ~a~%" selected)
