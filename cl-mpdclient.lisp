@@ -39,7 +39,7 @@
           for i from 0
           do (mvwaddstr pad i 0 artist))
     (cl-ncurses:move cursor-line 0)
-    (printw "j/k to navigate, P to pause MPD, q to quit. You may need to press j now to see anything.")
+    (printw "j/k to navigate, P to pause MPD, c to clear, [Enter] to play first song of artist, q to quit. You may need to press j now to see anything.")
     (prefresh pad scroll-index 0 1 0 lines artists-width)
     (refresh)
     (loop for input = (getch) 
