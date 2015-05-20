@@ -55,6 +55,9 @@
                         (decf scroll-index)
                         (cl-ncurses:move (decf cursor-line) 0)))
                  (#\P (pause mpdconn))
+                 (#\t
+                        (cl-ncurses:move (setf cursor-line 0) 0)  
+                  )
                  (#\c (mpd:clear mpdconn))
                  (#\G (progn ;;TODO
                         (cl-ncurses:move (setf cursor-line (length artists)) 0)
