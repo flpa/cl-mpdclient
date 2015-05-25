@@ -6,7 +6,7 @@
 (now-playing *conn*)
 ;;(play *conn*)
 ;;(pause *conn*)
-(status *conn*)
+(duration (status *conn*))
 
 (ping *conn*)
 
