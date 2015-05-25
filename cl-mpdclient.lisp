@@ -46,10 +46,10 @@
                  ;;limit on lower bound
                  (#\j (if (= cursor-line lines)       
                         (incf scroll-index)
-                        (cl-ncurses:move (incf cursor-line) 0)))
+                        (cl-ncurses:move (1+ (incf cursor-line)) 0)))
                  (#\k (if (zerop cursor-line)       
                         (decf scroll-index)
-                        (cl-ncurses:move (decf cursor-line) 0)))
+                        (cl-ncurses:move (1+ (decf cursor-line)) 0)))
                  (#\P (pause mpdconn))
                  (#\t
                   (progn 
