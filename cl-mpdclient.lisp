@@ -21,7 +21,7 @@
   (let* ((mpdconn (connect))
          (cursor-line 0)
          (scroll-index 0)
-         (lines (- *LINES* 1))
+         (lines (1- *LINES*))
          (artists-width (floor (/ *COLS* 3)))
          (stdout nil)
          (artists (mapcar #'(lambda (x) (subseq x 8)) 
@@ -44,6 +44,8 @@
           do (progn
                (mvprintw 3 50 (format nil "~a/~a" (first (duration status))
                                       (second (duration status))))
+               ;;move cursor back to current position
+               (cl-ncurses:move (1+ cursor-line) 0)  
                (unless (eql ERR input)
                  (prefresh pad scroll-index 0 1 0 lines artists-width)
                  (when *async* (sb-unix:nanosleep 0 100))
