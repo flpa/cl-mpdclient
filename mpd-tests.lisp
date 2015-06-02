@@ -16,6 +16,9 @@
 
 ;; returns list of strings like ("Artist: Amon Amarth" "Artist: Wither") ...
 (list-metadata *conn* 'artist)
+(list-metadata *conn* 'album 'artist "Death")
+;; doesn't like blanks?
+(list-metadata *conn* 'album 'artist "Blind Guardian")
 (length (list-metadata *conn* 'artist))
 
 (list-metadata *conn* 'genre)

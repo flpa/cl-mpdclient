@@ -40,6 +40,7 @@
     (refresh)
     (loop for input = (getch) 
           for status = (status mpdconn)
+          for selected = (nth cursor-line artists)
           while (not (eql (char-code #\q) input))
           do (progn
                (mvprintw 3 50 (format nil "~a/~a" (first (duration status))
@@ -70,7 +71,7 @@
                           ;;(setf scroll-index *max-artists*)
                           ))
                    (#\Newline 
-                    (let ((selected (nth cursor-line artists)))
+                    (progn
                       (format stdout "Selected ~a~%" selected)
                       (mpd:clear mpdconn)
                       ;;works for some
