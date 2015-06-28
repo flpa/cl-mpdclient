@@ -61,7 +61,7 @@
                       (progn
                         (setf searching nil)
                         (loop while (> (length term) 0) do (vector-pop term))))
-                     (#\Backspace (if (> (length term) 0) 
+                     (#\Rubout (if (> (length term) 0) 
                                     (vector-pop term)
                                     (setf searching nil)))
                      (otherwise (vector-push-extend (code-char input) term)))
@@ -94,7 +94,7 @@
                         ;;(add mpdconn selected) 
                         (add mpdconn (first (find-tracks mpdconn :artist selected)))
                         (play mpdconn)))
-                     (#\s (setf searching t))
+                     (#\/ (setf searching t))
                      (otherwise (format t "'~a'~%" input)))))))
     (delwin pad)
     (disconnect mpdconn))
