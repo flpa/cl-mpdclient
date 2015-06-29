@@ -52,11 +52,18 @@
     (refresh)
     (loop for input = (getch) 
           for status = (status mpdconn)
+          for song-elapsed = (first (duration status))
+          for song-duration = (second (duration status))
           do (progn
                ;;print duration
-               (mvprintw (- *LINES* 3) 0 (format nil "~a/~a" (first (duration status))
-                                      (second (duration status))))
-               (mvprintw (- *LINES* 2) 0 (format nil "Playing: ~a" 
+               (dotimes (i *COLS*)
+                 (mvprintw (- *LINES* 3) i "-"))
+               (dotimes (i (floor (* *COLS* (/ song-elapsed
+                                               song-duration))))
+                 (mvprintw (- *LINES* 3) i "="))
+     ;;          (mvprintw (- *LINES* 3) 0 (format nil "~a/~a" (first (duration status))
+      ;;                                (second (duration status))))
+               (mvprintw (- *LINES* 2) 0 (format nil "Playing: ~a" ; should say pause
                                                  (fetch-now-playing mpdconn)))
                ;;print search term
                (mvprintw (- *LINES* 1) 0 (format nil "~a" term))
