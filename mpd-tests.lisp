@@ -1,12 +1,18 @@
-
-
 (defparameter *conn* (connect))
 (disconnect *conn*)
 
-(now-playing *conn*)
+(artist (now-playing *conn*))
+(title (now-playing *conn*))
+(file (now-playing *conn*))
+
+
+
 ;;(play *conn*)
 ;;(pause *conn*)
 (duration (status *conn*))
+(song (status *conn*))
+(songid (status *conn*))
+(playlist-version (status *conn*))
 
 (ping *conn*)
 

@@ -20,12 +20,19 @@
   (mapcar #'(lambda (x) (subseq x 8)) 
           (list-metadata mpdconn 'artist)))
 
+(defun fetch-now-playing (conn)
+  (let ((track (now-playing conn)))
+    (if (title track)
+      (format nil "~a by ~a" (title track) (artist track))
+      ;;TODO: remove directory name(s)
+      (format nil "~a" (file track)))))
+
 (defun floclient () 
   (initscr)
   (let* ((mpdconn (connect))
          (cursor-line 0)
          (scroll-index 0)
-         (lines (1- *LINES*))
+         (lines (- *LINES* 4))
          (artists-width (floor (/ *COLS* 3)))
          (stdout nil)
          (artists (fetch-artists mpdconn))
@@ -47,10 +54,12 @@
           for status = (status mpdconn)
           do (progn
                ;;print duration
-               (mvprintw 3 50 (format nil "~a/~a" (first (duration status))
+               (mvprintw (- *LINES* 3) 0 (format nil "~a/~a" (first (duration status))
                                       (second (duration status))))
-               ;;print term
-               (mvprintw 4 50 (format nil "~a" term))
+               (mvprintw (- *LINES* 2) 0 (format nil "Playing: ~a" 
+                                                 (fetch-now-playing mpdconn)))
+               ;;print search term
+               (mvprintw (- *LINES* 1) 0 (format nil "~a" term))
                (unless (eql ERR input)
                  (prefresh pad scroll-index 0 1 0 lines artists-width)
                  (when *async* (sb-unix:nanosleep 0 100))
@@ -64,6 +73,9 @@
                      (#\Rubout (if (> (length term) 0) 
                                     (vector-pop term)
                                     (setf searching nil)))
+                     (#\Newline
+                      ;;do it!
+                      )
                      (otherwise (vector-push-extend (code-char input) term)))
                    (case (code-char input)
                      (#\q (return))
