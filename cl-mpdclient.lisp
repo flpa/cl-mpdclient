@@ -43,9 +43,14 @@
     (halfdelay 10)
     (cl-ncurses:clear)
     (noecho)
+    ;;(curs-set 0) ;; hide cursor
     (loop for artist in artists
           for i from 0
           do (mvwaddstr pad i 0 artist))
+    ;;(attroff A_REVERSE)
+    ;;(wattron pad A_REVERSE)
+    ;;(mvwaddstr pad cursor-line 0 "abc")
+    ;;(wattroff pad A_REVERSE)
     (cl-ncurses:move cursor-line 0)
     (printw "j/k to navigate, P to pause MPD, c to clear, [Enter] to play first song of artist, q to quit. You may need to press j now to see anything.")
     (prefresh pad scroll-index 0 1 0 lines artists-width)
@@ -58,15 +63,22 @@
                ;;print duration
                (dotimes (i *COLS*)
                  (mvprintw (- *LINES* 3) i "-"))
+               (attron A_BOLD)
                (dotimes (i (floor (* *COLS* (/ song-elapsed
                                                song-duration))))
                  (mvprintw (- *LINES* 3) i "="))
-     ;;          (mvprintw (- *LINES* 3) 0 (format nil "~a/~a" (first (duration status))
-      ;;                                (second (duration status))))
-               (mvprintw (- *LINES* 2) 0 (format nil "Playing: ~a" ; should say pause
-                                                 (fetch-now-playing mpdconn)))
+               (mvprintw (- *LINES* 2) 0 "Playing: "); should say pause
+               (attroff A_BOLD)
+               ;;           width of 'playing'
+               (mvprintw (- *LINES* 2) 9 (format nil "~a    ~a/~a" 
+                                                 (fetch-now-playing mpdconn)
+                                                 song-elapsed
+                                                 song-duration))
                ;;print search term
                (mvprintw (- *LINES* 1) 0 (format nil "~a" term))
+               (cl-ncurses:move cursor-line 0)
+               ;;change attributes of line, not available?
+               ;;(chgat cursor-line 0)
                (unless (eql ERR input)
                  (prefresh pad scroll-index 0 1 0 lines artists-width)
                  (when *async* (sb-unix:nanosleep 0 100))
@@ -78,8 +90,8 @@
                         (setf searching nil)
                         (loop while (> (length term) 0) do (vector-pop term))))
                      (#\Rubout (if (> (length term) 0) 
-                                    (vector-pop term)
-                                    (setf searching nil)))
+                                 (vector-pop term)
+                                 (setf searching nil)))
                      (#\Newline
                       ;;do it!
                       )
@@ -94,7 +106,7 @@
                             (decf scroll-index)
                             (cl-ncurses:move (1+ (decf cursor-line)) 0)))
                      (#\P (pause mpdconn))
-                     (#\t
+                     (#\t ;; should be 'gg'
                       (progn 
                         (setf scroll-index 0)
                         (prefresh pad scroll-index 0 1 0 lines artists-width)
