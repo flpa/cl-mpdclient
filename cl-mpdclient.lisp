@@ -20,6 +20,9 @@
   (mapcar #'(lambda (x) (subseq x 8)) 
           (list-metadata mpdconn 'artist)))
 
+(defun fetch-albums (artist mpdconn)
+  (mapcar #'(lambda (x) (subseq x 7)) (list-metadata mpdconn 'album 'artist artist)))
+
 (defun fetch-now-playing (conn)
   (let ((track (now-playing conn)))
     (if (title track)
@@ -37,6 +40,8 @@
          (stdout nil)
          (artists (fetch-artists mpdconn))
          (pad (newpad (length artists) 30))
+         ;;no more than 20 albums
+         (albumpad (newpad 20 30))
          (searching nil)
          (term (make-array 5 :fill-pointer 0 :adjustable t :element-type 'character)))
     (nodelay pad (if *async* TRUE FALSE))
@@ -47,6 +52,9 @@
     (loop for artist in artists
           for i from 0
           do (mvwaddstr pad i 0 artist))
+    (dotimes (i 10)
+          (mvwaddstr albumpad i 0 "abc") 
+      )
     ;;(attroff A_REVERSE)
     ;;(wattron pad A_REVERSE)
     ;;(mvwaddstr pad cursor-line 0 "abc")
@@ -81,6 +89,7 @@
                ;;(chgat cursor-line 0)
                (unless (eql ERR input)
                  (prefresh pad scroll-index 0 1 0 lines artists-width)
+                 (prefresh albumpad 0 0 1 artists-width lines (* 2 artists-width))
                  (when *async* (sb-unix:nanosleep 0 100))
                  ;;if in search: append char to search term
                  (if searching
@@ -128,5 +137,6 @@
                      (#\/ (setf searching t))
                      (otherwise (format t "'~a'~%" input)))))))
     (delwin pad)
+    (delwin albumpad)
     (disconnect mpdconn))
   (endwin))

@@ -5,8 +5,6 @@
 (title (now-playing *conn*))
 (file (now-playing *conn*))
 
-
-
 ;;(play *conn*)
 ;;(pause *conn*)
 (duration (status *conn*))
@@ -19,6 +17,7 @@
 (mpd:clear *conn*)
 
 (add *conn* "Amon Amarth")
+
 
 ;; returns list of strings like ("Artist: Amon Amarth" "Artist: Wither") ...
 (list-metadata *conn* 'artist)
